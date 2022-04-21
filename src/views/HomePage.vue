@@ -13,26 +13,53 @@
         </ion-toolbar>
       </ion-header>
     
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      </div>
+      isOpen ref state: {{ isOpenRef }}<br />
+      isOpen Web Component property: {{ isOpenProp }}<br />
+      <ion-button @click="openModal">Open Modal</ion-button>
+      
+      <ion-modal
+        ref="modalRef"
+        :is-open="isOpenRef"
+        @didPresent="updateState"
+        @didDismiss="updateState"
+      >
+        <ion-content>Modal Content</ion-content>
+      </ion-modal>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { IonModal, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'HomePage',
   components: {
+    IonModal,
     IonContent,
     IonHeader,
     IonPage,
     IonTitle,
-    IonToolbar
+    IonToolbar,
+    IonButton
+  },
+  setup() {
+    const isOpenRef = ref(false);
+    const isOpenProp = ref(false);
+    const modalRef = ref();
+    
+    const updateState = () => {
+      requestAnimationFrame(() => {
+        isOpenProp.value = modalRef.value.$el.isOpen;
+      });
+    }
+    
+    const openModal = () => {
+      isOpenRef.value = true;
+    }
+    
+    return { isOpenRef, openModal, updateState, modalRef, isOpenProp }
   }
 });
 </script>
